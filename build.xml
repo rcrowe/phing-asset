@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="TestBuild" default="build">
+    
+    <taskdef classname="lib.rcrowe.Assets" name="assets" />
+    
+    <target name="build">
+    
+        <assets host="localhost:8080/assets" subDomains="asset1,asset2,asset3" dir="assets">
+            <asset css="main.css" returnProperty="asset.css.main" />
+            <asset css="template/header.css" returnProperty="asset.css.template.header" />
+            <asset js="jquery.js" returnProperty="asset.js.jquery" />
+            <asset image="icons/spinner.gif" returnProperty="asset.images.spinner" />
+            <asset other="flash/main.swf" returnProperty="what.ever.name" />
+        </assets>
+        
+        <echo message="${asset.css.main}" />
+        <echo message="${asset.css.template.header}" />
+        <echo message="${asset.js.jquery}" />
+        <echo message="${asset.images.spinner}" />
+        <echo message="${what.ever.name}" />
+        
+    </target>
+    
+</project>
