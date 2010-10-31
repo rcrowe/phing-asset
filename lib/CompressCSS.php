@@ -1,18 +1,26 @@
 <?php
 
+require_once 'File.php';
+
 class CompressCSS
 {
     public $file;
     public $files = array();
+    public $overwrite = false;
     
-    public function __construct()
-    {
-        
-    }
+    public function __construct(){}
     
     public function setFile($file)
-    {
+    {    
         $this->file = $file;
+    }
+    
+    public function setOverwrite($over)
+    {
+        if(is_bool($over))
+        {
+            $this->overwrite = $over;
+        }
     }
     
     public function createFile()

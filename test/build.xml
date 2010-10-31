@@ -28,15 +28,18 @@
         <assets dir="./assets/" url="http://example.com/assets/">
             
             <compress tmpDir="./tmp">
-                <js file="compressed.js">
+                <js file="compressed.js" overwrite="true">
                     <file name="main.js" />
                 </js>
+                <css file="compressed.css" overwrite="true">
+                    <file name="main.css" />
+                </css>
             </compress>
             
-            <asset js="main.js" returnProperty="js.url" />
+            <!--<asset js="main.js" returnProperty="js.url" />
             <asset css="main.css" returnProperty="css.url" />
             <asset image="bg.png" returnProperty="image.url" />
-            <asset other="/swf/test.swf" returnProperty="swf.url" />
+            <asset other="/swf/test.swf" returnProperty="swf.url" />-->
             
         </assets>
         

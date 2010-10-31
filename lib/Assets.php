@@ -1,7 +1,7 @@
 <?php
 
-require 'Asset.php';
-require 'Compress.php';
+require_once 'Asset.php';
+require_once 'Compress.php';
 
 class Assets extends Task
 {

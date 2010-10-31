@@ -1,8 +1,8 @@
 <?php
 
-require 'yuicompressor.php';
-require 'CompressJS.php';
-require 'CompressCSS.php';
+require_once 'yuicompressor.php';
+require_once 'CompressJS.php';
+require_once 'CompressCSS.php';
 
 class Compress extends DataType
 {
@@ -10,19 +10,19 @@ class Compress extends DataType
     private $tmpDir;
     private $paths;
     
+    private $yui;
+    
     private $compress_js  = array();
     private $compress_css = array();
     
-    public function __construct()
-    {
-        
-    }
+    public function __construct(){}
     
     public function setTmpDir(PhingFile $dir)
     {
-        //Set tempory directory
-        
-        //TODO set some checking on the directory
+        if(!$dir->exists())
+        {
+            $dir->mkdirs();
+        }
         
         $this->tmpDir = $dir->getAbsolutePath();
     }
@@ -39,6 +39,74 @@ class Compress extends DataType
         return $this->compress_css[$num-1];
     }
     
+    private function yuiInstance($is_css = FALSE)
+    {
+        $jar = new PhingFile('../lib/yuicompressor-2.4.2.jar');
+
+        $instance = new YUICompressor($jar->getAbsolutePath(), $this->tmpDir);
+        
+        if($is_css)
+        {
+            $instance->setOption('type', 'css');
+        }
+        
+        return $instance;
+    }
+    
+    private function yuiAddFile($file, $is_css = FALSE)
+    {
+        if(!$is_css)
+        {
+            $folder = '/js/';
+        }
+        else
+        {
+            $folder = '/css/';
+        }
+        
+        $add = new PhingFile($this->assetDir.$folder.$file->file);
+        
+        if($add->exists() && $add->canRead())
+        {
+            $this->yui->addFile($add->getAbsolutePath());
+        }
+        else
+        {
+            throw new BuildException("Unable to read asset file: ".$add->getPath(), $this->location);
+        }
+    }
+    
+    private function output($is_css, $data, $js)
+    {
+        if(!$is_css)
+        {
+            $folder = '/js/';
+        }
+        else
+        {
+            $folder = '/css/';
+        }
+        
+        //Build path to output file
+        $out = new PhingFile($this->assetDir.$folder.$js->file);
+        
+        //Check whether to overwrite files
+        if($out->exists() && !$js->overwrite)
+        {
+            throw new BuildException("Trying to write to ".$js->file." but the overwrite flag has not been set to TRUE", $this->location);
+        }
+        else
+        {
+            if($out->exists())
+            {
+                $out->delete();
+            }
+        }
+        
+        //Write compressed JS to file
+        file_put_contents($out->getAbsolutePath(), $data);
+    }
+    
     public function main($dir, $paths)
     {
         $this->assetDir = $dir;
@@ -49,33 +117,34 @@ class Compress extends DataType
         {
             foreach($this->compress_js as $js)
             {
-                //Build file path to yui-compressor
-                $jar = new PhingFile('../lib/yuicompressor-2.4.2.jar');
-                
-                //Create instance of YUI compressor
-                $yui = new YUICompressor($jar->getAbsolutePath(), $this->tmpDir);
+                $this->yui = $this->yuiInstance();
                 
                 foreach($js->files as $file)
                 {
-                    //Build path to file
-                    $file = new PhingFile($this->assetDir.'/js/'.$file->file);
-                    
-                    if($file->exists() && $file->canRead())
-                    {
-                        $yui->addFile($file->getAbsolutePath());
-                    }
-                    else
-                    {
-                        throw new BuildException("Unable to read asset file: ".$file->getPath(), $this->location);
-                    }
+                    $this->yuiAddFile($file);
                 }
                 
-                $minified_js = $yui->compress();
+                $minified_js = $this->yui->compress();
                 
-                //Build path to output file
-                $file = new PhingFile($this->assetDir.'/js/'.$js->file);
+                $this->output(FALSE, $minified_js, $js);
+            }
+        }
+        
+        //Handle compression of CSS
+        if(!empty($this->compress_css))
+        {
+            foreach($this->compress_css as $css)
+            {
+                $this->yui = $this->yuiInstance(TRUE);
                 
-                file_put_contents($file->getAbsolutePath(), $minified_js);
+                foreach($css->files as $file)
+                {
+                    $this->yuiAddFile($file, TRUE);
+                }
+                
+                $minified_css = $this->yui->compress();
+                
+                $this->output(TRUE, $minified_css, $css);
             }
         }
     }
