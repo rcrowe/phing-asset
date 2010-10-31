@@ -12,7 +12,7 @@ Requirements
 Example
 --------
 
-Open a terminal and run:
+Open a terminal and run the following in `test`:
 
 `cd test`
 
