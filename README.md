@@ -12,7 +12,7 @@ Requirements
 Example
 --------
 
-Open a terminal and run the following in `test`:
+Open a terminal and run the following in `phing-asset`:
 
 `cd test`
 
