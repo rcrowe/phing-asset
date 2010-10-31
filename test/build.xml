@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="TestBuild" default="build">
+    
+    <!--<taskdef classname="lib.rcrowe.Assets" name="assets" />-->
+    
+    <taskdef name="assets" classpath="../lib/" classname="Assets" />
+    
+    <target name="build">
+    
+        <!--<assets dir="./assets/" url="http://goat.com/assets">
+
+        	<compress dir="./temp">
+        		<js returnProperty="js.compressed">
+        			<file>main.js</file>
+        			<file>test.js</file>
+        		</js>
+        		<css>
+        			<file>base.css</file>
+        			<file>main.css</file>
+        		</css>
+        	</compress>
+
+        	<asset file="asset.js.compressed" returnProperty="js.url" />
+
+        </asset>-->
+        
+        <assets dir="./assets/" url="http://example.com/assets/">
+            
+            <compress>
+                
+                <js file="compressed.js">
+                    <file name="main.js" />
+                </js>
+                
+            </compress>
+            
+            <asset js="main.js" returnProperty="js.url" />
+            <asset css="main.css" returnProperty="css.url" />
+            <asset image="bg.png" returnProperty="image.url" />
+            <asset other="/swf/test.swf" returnProperty="swf.url" />
+            
+        </assets>
+        
+        <echo message="JS path: ${js.url}" />
+        <echo message="CSS path: ${css.url}" />
+        <echo message="IMAGE path: ${image.url}" />
+        <echo message="OTHER path: ${swf.url}" />
+        
+    </target>
+    
+</project>
