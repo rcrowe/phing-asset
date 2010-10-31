@@ -24,15 +24,13 @@
         	<asset file="asset.js.compressed" returnProperty="js.url" />
 
         </asset>-->
-        
+
         <assets dir="./assets/" url="http://example.com/assets/">
             
-            <compress>
-                
+            <compress tmpDir="./tmp">
                 <js file="compressed.js">
                     <file name="main.js" />
                 </js>
-                
             </compress>
             
             <asset js="main.js" returnProperty="js.url" />

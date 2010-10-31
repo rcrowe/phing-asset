@@ -5,24 +5,24 @@ require 'Compress.php';
 
 class Assets extends Task
 {
-    //Paths
+    //Paths under the asset folder
     private $paths = array(
         'js'     => 'js/',
         'css'    => 'css/',
         'images' => 'images/'
     );
     
-    private $phingDir;
+    //Info <assets> tag
+    private $assetDir; //Holds PhingFile instance of asset directory
+    private $url;      //URL to assets
     
     //Details for <compress>
     private $compress = array();
     
     //Details for <asset>
-    private $assetsDir;
-    private $url;
     private $assets = array();
-    private $assetFolder;
     
+    //Need this to satisfy Phing
     public function init()
     {}
     
@@ -33,11 +33,8 @@ class Assets extends Task
         {
             throw new BuildException("Can not find asset directory: ".$dir->getAbsolutePath(), $this->location);
         }
-        else
-        {
-            $this->phingDir = $dir;
-            $this->assetsDir = $dir->getAbsolutePath().'/';
-        }
+        
+        $this->assetDir = $dir->getAbsolutePath();
     }
     
     //Set the URL to generate assets URLS with
@@ -50,7 +47,7 @@ class Assets extends Task
     //Handle <asset> tag
     public function createAsset()
     {
-        $num = array_push($this->assets, new Asset());
+        $num = array_push($this->assets, new Asset($this->assetDir, $this->url, $this->paths));
         return $this->assets[$num-1];
     }
     
@@ -63,6 +60,26 @@ class Assets extends Task
     
     public function main()
     {
+        //Handle any compression
+        if(!empty($this->compress))
+        {
+            foreach($this->compress as $compress)
+            {
+                $compress->main($this->assetDir, $this->paths);
+            }
+        }
+        
+        /*
+        //Handle building URLs to assets
+        if(!empty($this->assets))
+        {
+            foreach($this->assets as $asset)
+            {
+                $asset->main();
+            }
+        }
+        
+        
         if(empty($this->assetsDir))
         {
             throw new BuildException("Make sure you set the path to your assets", $this->location);
@@ -95,7 +112,7 @@ class Assets extends Task
             
             //Set the generated URL to use in the buildfile
             $this->project->setProperty($asset->returnProperty, $url);
-        }
+        }*/
     }
     
     public function checkFileExists(Asset $asset)

@@ -13,7 +13,7 @@ class CompressJS
     }
     
     public function setFile($file)
-    {
+    {    
         $this->file = $file;
     }
     

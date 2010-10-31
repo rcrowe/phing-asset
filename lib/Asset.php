@@ -3,7 +3,7 @@
 class Asset extends DataType
 {
     private $assetsDir;
-    private $paths;
+    private $url;
     
     public $type;
     public $file;
@@ -15,10 +15,10 @@ class Asset extends DataType
     const ASSET_TYPE_IMAGE = 2;
     const ASSET_TYPE_OTHER = 3;
     
-    public function __construct()
+    public function __construct($dir, $url)
     {
-        $this->assetsDir = $assetsDir;
-        $this->paths     = $paths;
+        $this->assetsDir = $dir;
+        $this->url       = $url;
     }
     
     public function setJs($file)
