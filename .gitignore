@@ -12,3 +12,7 @@ tmtags
 
 ## VIM
 *.swp
+
+## Ignore generated test files
+test/assets/css/compressed.css
+test/assets/js/compressed.js
