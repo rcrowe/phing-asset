@@ -15,4 +15,5 @@ Example
 Open a terminal and run:
 
 `cd test`
+
 `phing`
