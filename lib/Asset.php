@@ -117,7 +117,7 @@ class Asset extends DataType
         $folder = (!empty($this->assetFolder)) ? $this->assetFolder : '';
         $url_path = $folder.$this->file;
         
-        return sprintf("http://%s%s%s", $this->url, $url_path, $mod_param);
+        return sprintf("%s%s%s", $this->url, $url_path, $mod_param);
     }
 }
 

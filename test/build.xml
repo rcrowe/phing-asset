@@ -1,34 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="TestBuild" default="build">
+<project name="phing-asset" default="build">
     
+    <!-- Define the new Asset task, so that Phing knows about the tags below -->
     <taskdef name="assets" classpath="../lib/" classname="Assets" />
     
+    <!-- ============================================  -->
+    <!-- (DEFAULT) Target: main                        -->
+    <!-- ============================================  -->
     <target name="build">
         
+        <!-- Create temporary directory to compress files too -->
         <mkdir dir="./tmp/" />
 
+        <!-- Here we go...phing-asset -->
+        <!-- dir = Path to your assets folder -->
+        <!-- url = Base URL to generate with -->
         <assets dir="./assets/" url="http://example.com/assets/">
             
+            <!-- We want to compress some files - optional -->
+            <!-- tmpDir = Path to store temporary files while compressing -->
             <compress tmpDir="./tmp">
+                
+                <!-- We want to compress some javascript files -->
+                <!-- file = Output filename -->
+                <!-- Overwrite file if it exists - If false and exists, will throw build exception -->
                 <js file="compressed.js" overwrite="true">
+                    
+                    <!-- List of files to compress and combine -->
+                    <!-- Combined in the order stated below -->
                     <file name="main.js" />
                     <file name="test.js" />
                 </js>
+                
+                <!-- We want to compress some CSS files -->
+                <!-- file = Output filename -->
+                <!-- Overwrite file if it exists - If false and exists, will throw build exception -->
                 <css file="compressed.css" overwrite="true">
                     <file name="main.css" />
                 </css>
+                
             </compress>
             
-            <asset js="main.js" returnProperty="js.url" />
-            <asset css="main.css" returnProperty="css.url" />
+            <!-- Lets generate some URLs to our assets -->
+            <!-- js,css,image = Path to file from is associated directory, eg, js = /js/compress.js -->
+            <!-- returnProperty = Property to set result of generated URL -->
+            <asset js="compressed.js" returnProperty="js.url" />
+            <asset css="compressed.css" returnProperty="css.url" />
             <asset image="bg.png" returnProperty="image.url" />
             <asset other="swf/test.swf" returnProperty="swf.url" />
             
         </assets>
         
+        <!-- Remove temporary directory -->
         <delete dir="./tmp/" includeemptydirs="true" />
         
+        <!-- Output the generated URLs -->
+        <!-- Can then use <replacetokens> to put the URLs in your HTML -->
         <echo message="JS path: ${js.url}" />
         <echo message="CSS path: ${css.url}" />
         <echo message="IMAGE path: ${image.url}" />
